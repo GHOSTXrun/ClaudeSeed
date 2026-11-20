@@ -6,7 +6,7 @@ for a given public address. A public-address preview needs no signature.
 
 Run Node.js 22 or later from the project root:
   node server.mjs
-Open http://localhost:3000 with Phantom or Solflare installed. Use that exact
+Open http://localhost:3000 with Phantom, Backpack, or Solflare installed. Use that exact
 local origin, or set CLAUDEBOX_ORIGIN to your public HTTPS URL before starting.
 
 Server environment:
@@ -16,8 +16,8 @@ Server environment:
   CLAUDEBOX_ALLOWED_WALLETS  Optional comma-separated wallet allowlist for chat.
   PORT                       Defaults to 3000.
 
-Host the Node process behind HTTPS for a public deployment. The static preview
-can run separately, but wallet sign-in and chat use the same-origin Node server.
+Host the Node process behind HTTPS for a public deployment. The static site supports wallet connection and local hatching. Wallet signature
+verification and Claude chat use the same-origin Node server.
 Keep the API key in the host's environment settings. Chat has per-wallet and
 server-wide limits. Session state and recent chat history live in one process
 and expire after eight hours or when the process restarts. Minting and token

@@ -100,6 +100,12 @@
   ];
   let provider;
   let session;
+  const picker = byId('walletPicker');
+  const wallets = {
+    phantom: ['Phantom', () => window.phantom?.solana ?? (window.solana?.isPhantom ? window.solana : null)],
+    backpack: ['Backpack', () => window.backpack?.solana ?? window.backpack ?? (window.solana?.isBackpack ? window.solana : null)],
+    solflare: ['Solflare', () => window.solflare?.solana ?? window.solflare]
+  };
   let busy = false;
   let generation = 0;
 
@@ -258,37 +264,51 @@
     for (const item of next.history) addMessage(item.role, item.content);
     byId('chatInput').disabled = !next.configured;
     byId('chatSend').disabled = !next.configured;
-    byId('chatStatus').textContent = next.configured ? 'Recent messages are kept for this sign-in.' : 'Claude chat needs a server API key.';
+    byId('chatStatus').textContent = next.local ? 'Wallet connected. Claude chat needs the Node service.' : next.configured ? 'Recent messages are kept for this sign-in.' : 'Claude chat needs a server API key.';
   }
 
-  async function signIn() {
+  async function signIn(name) {
     if (busy) return;
-    if (session?.address) { location.hash = 'talk'; return; }
+    const [label, getWallet] = wallets[name];
+    const wallet = getWallet();
+    const status = byId('walletPickerStatus');
+    if (!wallet?.connect) {
+      status.textContent = 'Install or open ' + label + ' to connect.';
+      return;
+    }
     busy = true;
-    connect.forEach(button => { button.disabled = true; });
+    status.textContent = 'Waiting for ' + label + '…';
+    const choices = [...picker.querySelectorAll('[data-wallet]')];
+    choices.forEach(button => { button.disabled = true; });
     try {
-      const wallet = window.phantom?.solana ?? window.solflare;
-      if (!wallet?.connect || !wallet?.signMessage) throw new Error('Open ClaudeBox with Phantom or Solflare installed.');
       const result = await wallet.connect();
       const address = (result?.publicKey ?? wallet.publicKey)?.toString();
-      if (!address) throw new Error('Wallet did not provide a public key.');
-      const challenge = await api('challenge', {address});
-      const signed = await wallet.signMessage(new TextEncoder().encode(challenge.message), 'utf8');
-      const signature = Array.from(signed.signature ?? signed, value => value.toString(16).padStart(2, '0')).join('');
-      const next = await api('verify', {nonce: challenge.nonce, signature});
+      if (!address || !decodeAddress(address)) throw new Error('Wallet did not provide a valid Solana public key.');
+      let next = {address, configured: false, local: true, history: []};
+      let service;
+      try { service = await api('session'); } catch {}
+      if (service) {
+        if (!wallet.signMessage) throw new Error(label + ' cannot sign messages in this browser.');
+        const challenge = await api('challenge', {address});
+        const signed = await wallet.signMessage(new TextEncoder().encode(challenge.message), 'utf8');
+        const signature = Array.from(signed.signature ?? signed, value => value.toString(16).padStart(2, '0')).join('');
+        next = await api('verify', {nonce: challenge.nonce, signature});
+      }
+      if (wallet.publicKey && wallet.publicKey.toString() !== address) {
+        if (service) await api('logout', {});
+        throw new Error('Wallet account changed. Connect again.');
+      }
       provider = wallet;
-      wallet.off?.('accountChanged', signOut);
-      wallet.off?.('disconnect', signOut);
       wallet.on?.('accountChanged', signOut);
       wallet.on?.('disconnect', signOut);
-      if (wallet.publicKey?.toString() !== address) { await signOut(); return; }
       await renderSession(next);
+      if (picker.open) picker.close();
       location.hash = 'talk';
     } catch (error) {
-      notify(error.message || 'Wallet sign-in did not complete.');
+      status.textContent = error.message || 'Wallet connection did not complete.';
     } finally {
       busy = false;
-      connect.forEach(button => { button.disabled = false; });
+      choices.forEach(button => { button.disabled = false; });
     }
   }
 
@@ -297,14 +317,22 @@
     provider?.off?.('disconnect', signOut);
     provider = undefined;
     try {
-      await api('logout', {});
+      if (!session?.local) await api('logout', {});
       await renderSession({address: null, configured: session?.configured});
     } catch (error) {
       notify(error.message);
     }
   }
 
-  connect.forEach(button => button.addEventListener('click', signIn));
+  connect.forEach(button => button.addEventListener('click', () => {
+    if (session?.address) { location.hash = 'talk'; return; }
+    if (busy || picker.open) return;
+    byId('walletPickerStatus').textContent = '';
+    picker.showModal();
+  }));
+  picker.querySelectorAll('[data-wallet]').forEach(button => {
+    button.addEventListener('click', () => signIn(button.dataset.wallet));
+  });
   byId('walletLogout').addEventListener('click', signOut);
   const initialGeneration = generation;
   api('session').then(next => {

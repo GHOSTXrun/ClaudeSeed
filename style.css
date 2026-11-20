@@ -21,3 +21,13 @@
 .box-profile{grid-template-columns:80px minmax(0,1fr)}
 .box-profile .box-art,.terminal-box,.lore-box{width:80px;height:80px;max-width:none}
 .terminal-box{display:block;margin:12px 0}
+
+.ca,.ca b,.footer-ca{color:var(--green)}
+#walletPicker{width:min(380px,calc(100% - 32px));padding:20px;color:var(--ink);background:var(--panel);border:1px solid var(--edge)}
+#walletPicker::backdrop{background:rgb(0 0 0 / 75%)}
+#walletPicker h2{font-size:16px;margin:0 35px 14px 0}
+.wallet-close{position:absolute;right:12px;top:12px}
+.wallet-options{display:grid;gap:8px}
+.wallet-options .btn{justify-content:flex-start}
+#walletPickerStatus{color:var(--muted);font-size:12px;margin:12px 0 0}
+#walletPickerStatus:empty{display:none}
