@@ -1,8 +1,27 @@
 ClaudeBox
-Offline frontend recreation of the public site at pals.onl.
 
-Open index.html in a modern browser. The page uses local HTML, CSS and JavaScript. It has responsive navigation, feature sections, the 18-species field guide, documentation, local wallet preview, demo PAL chat, and copy-address control.
+A Solana wallet signs in with an expiring message challenge and hatches a pixel
+cardboard robot. The SHA-256 avatar seed fixes its name, eyes, lights and accessory
+for a given public address. A public-address preview needs no signature.
 
-This is a frontend-only demo. Wallet connection, Claude API calls, NFT minting, server memory, real deterministic hatch logic, and live treasury data are not included. No private keys or wallet credentials are requested.
+Run Node.js 22 or later from the project root:
+  node server.mjs
+Open http://localhost:3000 with Phantom or Solflare installed. Use that exact
+local origin, or set CLAUDEBOX_ORIGIN to your public HTTPS URL before starting.
 
-The stylesheet loads IBM Plex Mono from Google Fonts when online; a system monospace fallback is provided.
+Server environment:
+  ANTHROPIC_API_KEY          Enables real Claude chat.
+  ANTHROPIC_MODEL            Optional, defaults to claude-sonnet-5-5.
+  CLAUDEBOX_ORIGIN           Exact site origin. Defaults to http://localhost:PORT.
+  CLAUDEBOX_ALLOWED_WALLETS  Optional comma-separated wallet allowlist for chat.
+  PORT                       Defaults to 3000.
+
+Host the Node process behind HTTPS for a public deployment. The static preview
+can run separately, but wallet sign-in and chat use the same-origin Node server.
+Keep the API key in the host's environment settings. Chat has per-wallet and
+server-wide limits. Session state and recent chat history live in one process
+and expire after eight hours or when the process restarts. Minting and token
+economics are concept features.
+
+Phantom integration: https://docs.phantom.com/solana/integrating-phantom
+Claude Messages API: https://platform.claude.com/docs/en/api/overview

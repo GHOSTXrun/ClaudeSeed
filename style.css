@@ -4,3 +4,16 @@
 
 :where(a,button,input,summary):focus-visible{outline:2px solid var(--green);outline-offset:3px}
 ::selection{background:var(--green);color:var(--dark)}
+
+[hidden]{display:none!important}
+.box-preview{display:flex;align-items:center;gap:16px}
+.box-art{width:144px;height:144px;max-width:42%;object-fit:contain;image-rendering:pixelated;flex:none;background:var(--sunken);border:1px solid var(--line)}
+.talk-head{display:flex;align-items:center;gap:12px;color:var(--peach2)}
+.talk-head .box-art{width:60px;height:60px}
+.talk-head .btn{margin-left:auto}
+.chatlog{max-height:360px;overflow:auto;overflow-wrap:anywhere;margin:14px 0}
+.chatlog p{white-space:pre-wrap;margin:0 0 10px;padding:10px 12px;background:var(--panel2);border-left:2px solid var(--peach)}
+.chatlog .botline{border-color:var(--green)}
+.chat-form{max-width:none}
+#chatStatus{color:var(--muted);font-size:12px;margin:10px 0 0}
+.btn:disabled{opacity:.6;cursor:wait}
