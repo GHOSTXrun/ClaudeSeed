@@ -6,6 +6,98 @@
   const names = ['Ember', 'Crate', 'Patch', 'Pixel', 'Relay', 'Tinker', 'Mica', 'Pip'];
   const eyes = ['Classic', 'Visor', 'Square'];
   const accessories = ['Air vents', 'Antenna', 'Tape seal', 'Corner badge'];
+  const catalog = [
+    [
+      "Ember",
+      "FOCUS",
+      "Turns a messy brief into the next three steps."
+    ],
+    [
+      "Crate",
+      "RECALL",
+      "Keeps track of decisions and the details behind them."
+    ],
+    [
+      "Patch",
+      "WIT",
+      "Finds a small fix when a big rewrite can wait."
+    ],
+    [
+      "Pixel",
+      "CURIOSITY",
+      "Checks the edge cases hidden in a polished design."
+    ],
+    [
+      "Relay",
+      "FOCUS",
+      "Writes handoffs the next person can pick up quickly."
+    ],
+    [
+      "Tinker",
+      "CURIOSITY",
+      "Builds a quick prototype to answer a specific question."
+    ],
+    [
+      "Mica",
+      "RECALL",
+      "Keeps notes tidy and easy to revisit."
+    ],
+    [
+      "Pip",
+      "WIT",
+      "Makes long explanations short enough to use."
+    ],
+    [
+      "Beacon",
+      "FOCUS",
+      "Finds the next step when a project stalls."
+    ],
+    [
+      "Sprocket",
+      "CURIOSITY",
+      "Follows moving parts until the system makes sense."
+    ],
+    [
+      "Fold",
+      "FOCUS",
+      "Turns scattered notes into an outline."
+    ],
+    [
+      "Scout",
+      "CURIOSITY",
+      "Looks for the assumptions a plan depends on."
+    ],
+    [
+      "Spool",
+      "RECALL",
+      "Picks up the thread from the last conversation."
+    ],
+    [
+      "Latch",
+      "FOCUS",
+      "Works through one checklist item at a time."
+    ],
+    [
+      "Glint",
+      "WIT",
+      "Spots the one detail that changes a draft."
+    ],
+    [
+      "Parcel",
+      "RECALL",
+      "Packs the context others need to take over."
+    ],
+    [
+      "Dot",
+      "WIT",
+      "Turns a blank page into a first draft."
+    ],
+    [
+      "Volt",
+      "CURIOSITY",
+      "Tests an unusual idea before ruling it out."
+    ]
+  ];
   let provider;
   let session;
   let busy = false;
@@ -82,6 +174,47 @@
       rect(box.light, 36, 35, 2, 2);
     }
   }
+
+
+  function renderCatalog() {
+    for (const [index, [name, trait, description]] of catalog.entries()) {
+      const box = {
+        eye: index % eyes.length,
+        light: lights[index % lights.length],
+        accessory: Math.floor(index / eyes.length) % accessories.length,
+        panels: Array.from({length: 8}, (_, panel) => (index * 17 + panel * 11) % 29)
+      };
+      const card = document.createElement('article');
+      card.className = 'species box-profile';
+      const art = document.createElement('canvas');
+      art.className = 'box-art';
+      art.width = art.height = 48;
+      art.setAttribute('role', 'img');
+      art.setAttribute('aria-label', name + ' cardboard robot');
+      draw(box, art);
+
+      const info = document.createElement('div');
+      const label = document.createElement('div');
+      label.className = 'trait';
+      label.textContent = trait;
+      const title = document.createElement('h3');
+      title.textContent = name;
+      const bio = document.createElement('p');
+      bio.textContent = description;
+      const appearance = document.createElement('p');
+      appearance.textContent = eyes[box.eye] + ' eyes · ' + accessories[box.accessory];
+      info.append(label, title, bio, appearance);
+      card.append(art, info);
+      byId('boxCatalog').append(card);
+
+      const item = document.createElement('div');
+      item.textContent = name + ' · ' + trait;
+      byId('boxCatalogIndex').append(item);
+      document.querySelectorAll('[data-box-profile="' + name.toLowerCase() + '"]').forEach(canvas => draw(box, canvas));
+    }
+  }
+
+  renderCatalog();
 
   async function api(path, data) {
     const response = await fetch('/api/' + path, data === undefined ? {} : {

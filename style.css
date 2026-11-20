@@ -17,3 +17,7 @@
 .chat-form{max-width:none}
 #chatStatus{color:var(--muted);font-size:12px;margin:10px 0 0}
 .btn:disabled{opacity:.6;cursor:wait}
+
+.box-profile{grid-template-columns:80px minmax(0,1fr)}
+.box-profile .box-art,.terminal-box,.lore-box{width:80px;height:80px;max-width:none}
+.terminal-box{display:block;margin:12px 0}
