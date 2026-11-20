@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: claudebox
+    runtime: node
+    plan: free
+    branch: main
+    buildCommand: node --check server.mjs && node --check app.js && node --check box.js
+    startCommand: node server.mjs
+    healthCheckPath: /
+    domains:
+      - claudebox.fun
+    envVars:
+      - key: NODE_VERSION
+        value: "24.22.1"
+      - key: CLAUDEBOX_ORIGIN
+        value: https://claudebox.fun
+      - key: ANTHROPIC_API_KEY
+        sync: false
