@@ -1,4 +1,4 @@
-PALS — Productive Agent Learning System
+ClaudeBox
 Offline frontend recreation of the public site at pals.onl.
 
 Open index.html in a modern browser. The page uses local HTML, CSS and JavaScript. It has responsive navigation, feature sections, the 18-species field guide, documentation, local wallet preview, demo PAL chat, and copy-address control.
