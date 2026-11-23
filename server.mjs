@@ -78,7 +78,7 @@ async function api(req, res, path) {
   }
   if (req.method !== 'POST' || req.headers.origin !== publicOrigin ||
       req.headers['content-type']?.split(';')[0] !== 'application/json') {
-    return responds(res, 403, {error: 'Open SKULOS at its configured origin.'});
+    return responds(res, 403, {error: 'Open PALCOREX at its configured origin.'});
   }
   const body = await readJson(req);
   if (path === '/api/challenge') {
@@ -86,7 +86,7 @@ async function api(req, res, path) {
     if (challenges.size >= 2000) return responds(res, 503, {error: 'Sign-in is busy. Try again shortly.'});
     const nonce = randomBytes(32).toString('hex');
     const expires = Date.now() + 300_000;
-    const message = 'Sign in to SKULOS\nSite: ' + publicOrigin + '\nWallet: ' + body.address +
+    const message = 'Sign in to PALCOREX\nSite: ' + publicOrigin + '\nWallet: ' + body.address +
       '\nNonce: ' + nonce + '\nExpires: ' + new Date(expires).toISOString() + '\nThis message does not authorize any transaction.';
     challenges.set(nonce, {address: body.address, message, expires});
     return responds(res, 200, {nonce, message});
@@ -130,7 +130,7 @@ async function api(req, res, path) {
       signal: AbortSignal.timeout(35_000),
       body: JSON.stringify({
         model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5', max_tokens: 512,
-        system: 'You are a small pixel skull companion from SKULOS. Respond in the user’s language and help with their tasks. Honor preferences given in the conversation. You have no wallet access or transaction tools.',
+        system: 'You are a small pixel skull companion from PALCOREX. Respond in the user’s language and help with their tasks. Honor preferences given in the conversation. You have no wallet access or transaction tools.',
         messages
       })
     });
@@ -165,4 +165,4 @@ const server = createServer(async (req, res) => {
     if (!res.headersSent) responds(res, error.status || 502, {error: error.status ? error.message : 'Service unavailable.'});
   }
 });
-server.listen(port, () => console.log('SKULOS listening on port ' + port));
+server.listen(port, () => console.log('PALCOREX listening on port ' + port));

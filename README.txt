@@ -1,4 +1,4 @@
-ClaudeBox
+PALCOREX
 
 A Solana wallet signs in with an expiring message challenge and hatches a pixel
 cardboard robot. The SHA-256 avatar seed fixes its name, eyes, lights and accessory

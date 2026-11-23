@@ -240,7 +240,7 @@
       method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)
     });
     if (!response.headers.get('Content-Type')?.includes('application/json')) {
-      throw new Error('SKULOS server is unavailable. Start the Node server to use wallet sign-in and chat.');
+      throw new Error('PALCOREX server is unavailable. Start the Node server to use wallet sign-in and chat.');
     }
     const result = await response.json();
     if (!response.ok) throw Object.assign(new Error(result.error), {status: response.status});
