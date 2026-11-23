@@ -2,10 +2,10 @@
   const byId = id => document.getElementById(id);
   const talk = byId('talkArea');
   const connect = [...document.querySelectorAll('[data-action="connect"]')];
-  const lights = ['#b5fd0c', '#ffd45e', '#ff9e55', '#cdebff', '#fff1e2'];
+  const lights = ['#ff982f', '#ffc36d', '#ff6b55', '#55e6f4', '#fff2d9'];
   const names = ['Ember', 'Crate', 'Patch', 'Pixel', 'Relay', 'Tinker', 'Mica', 'Pip'];
-  const eyes = ['Classic', 'Visor', 'Square'];
-  const accessories = ['Air vents', 'Antenna', 'Tape seal', 'Corner badge'];
+  const eyes = ['Classic', 'Narrow', 'Square'];
+  const accessories = ['Spark', 'Signal', 'Pixel seam', 'Corner chip'];
   const catalog = [
     [
       "Ember",
@@ -125,62 +125,75 @@
       eye: hash[4] % eyes.length,
       light: lights[hash[5] % lights.length],
       accessory: hash[6] % accessories.length,
-      panels: hash.slice(7, 15)
+      markings: hash.slice(7, 15)
     };
   }
 
   function draw(box, canvas) {
     const ctx = canvas.getContext('2d');
-    function rect(color, x, y, w, h) {
+    function rect(color, x, y, width, height) {
       ctx.fillStyle = color;
-      ctx.fillRect(x, y, w, h);
+      ctx.fillRect(x, y, width, height);
     }
-    ctx.clearRect(0, 0, 48, 48);
-    ctx.fillStyle = '#fbba74';
-    ctx.beginPath();
-    ctx.moveTo(5, 14);
-    ctx.lineTo(11, 5);
-    ctx.lineTo(37, 5);
-    ctx.lineTo(43, 14);
-    ctx.fill();
-    rect('#bd7b3f', 5, 14, 38, 29);
-    rect('#e49b58', 6, 14, 36, 27);
-    box.panels.forEach((value, index) => {
-      rect(index % 2 ? '#d48d4c' : '#eea965', 7 + value % 28, 18 + index * 2, 4, 2);
-    });
-    rect('#77451f', 6, 16, 36, 2);
-    rect('#77451f', 32, 15, 10, 4);
-    for (let i = 0; i < 3; i++) rect(box.light, 33 + i * 3, 16, 2, 2);
-    if (box.eye === 1) {
-      rect('#190c03', 13, 23, 22, 7);
-      rect(box.light, 15, 25, 18, 2);
-    } else {
-      for (const x of [14, 28]) {
-        const height = box.eye === 0 ? 8 : 6;
-        rect('#190c03', x, 23, 6, height);
-        rect('#fff1e2', x + 1, 24, 2, 2);
-      }
-    }
-    rect('#77451f', 8, 33, 11, 7);
-    rect(box.light, 10, 34, 1, 1);
-    rect(box.light, 11, 35, 1, 1);
-    rect(box.light, 12, 36, 1, 1);
-    rect(box.light, 11, 37, 1, 1);
-    rect(box.light, 10, 38, 1, 1);
-    rect(box.light, 14, 38, 3, 1);
-    if (box.accessory === 0) {
-      for (let i = 0; i < 3; i++) rect('#77451f', 35, 35 + i * 2, 5, 1);
-    } else if (box.accessory === 1) {
-      rect('#77451f', 32, 2, 1, 8);
-      rect(box.light, 31, 1, 3, 2);
-    } else if (box.accessory === 2) {
-      rect('#ffe0a9', 21, 5, 6, 10);
-    } else {
-      rect('#77451f', 34, 34, 6, 5);
-      rect(box.light, 36, 35, 2, 2);
-    }
-  }
 
+    const cyan = '#00cbe5';
+    const orange = '#ff780e';
+    const red = '#f31d29';
+    const bone = '#fff2d9';
+    const shade = '#efba75';
+    const ink = '#08080c';
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // The stepped silhouette follows the logo, with cyan on the left and warm pixels on the right.
+    const bands = [
+      [4, 4, 14], [8, 4, 10], [12, 4, 6], [16, 16, 3],
+      [32, 4, 6], [36, 3, 10], [39, 4, 12]
+    ];
+    for (const [y, height, left] of bands) {
+      rect(cyan, left, y, 24 - left, height);
+      rect(y < 12 ? orange : red, 24, y, 24 - left, height);
+    }
+
+    rect(bone, 16, 6, 16, 5);
+    rect(bone, 12, 10, 24, 5);
+    rect(bone, 8, 14, 32, 5);
+    rect(bone, 5, 18, 38, 13);
+    rect(bone, 8, 30, 32, 5);
+    rect(bone, 12, 34, 24, 3);
+
+    for (const x of [14, 22, 30]) {
+      rect(shade, x, 36, 5, 5);
+      rect(bone, x, 35, 5, 4);
+    }
+    for (const x of [19, 27]) rect(ink, x, 38, 3, 5);
+
+    rect(shade, 8, 31, 2, 4);
+    rect(shade, 36, 31, 4, 4);
+    rect('#a9edf3', 6, 19, 2, 9);
+    rect('#a9edf3', 9, 15, 2, 3);
+    rect(cyan, 10, 29, 2, 2);
+    rect('#079ebf', 12, 31, 2, 2);
+    rect(orange, 36, 29, 2, 2);
+    rect(orange, 34, 31, 2, 2);
+
+    const eyeHeight = [8, 6, 9][box.eye];
+    for (const x of [10, 29]) {
+      rect(ink, x, 20, 9, eyeHeight);
+      rect('#ffffff', x + 2, 22, 2, 2);
+    }
+    rect(ink, 22, 29, 4, 4);
+
+    const marks = [
+      [[28, 8, 2, 4], [30, 10, 2, 3], [32, 12, 2, 2]],
+      [[28, 8, 2, 4], [30, 8, 3, 2], [31, 11, 2, 2]],
+      [[29, 8, 2, 3], [31, 10, 2, 3], [33, 12, 2, 2]],
+      [[29, 8, 3, 3], [32, 10, 3, 3]]
+    ];
+    for (const [x, y, width, height] of marks[box.accessory]) {
+      rect(box.light, x, y, width, height);
+    }
+    rect(shade, 13 + box.markings[0] % 7, 10 + box.markings[1] % 5, 1, 1);
+  }
 
   function renderCatalog() {
     for (const [index, [name, trait, description]] of catalog.entries()) {
@@ -188,7 +201,7 @@
         eye: index % eyes.length,
         light: lights[index % lights.length],
         accessory: Math.floor(index / eyes.length) % accessories.length,
-        panels: Array.from({length: 8}, (_, panel) => (index * 17 + panel * 11) % 29)
+        markings: Array.from({length: 8}, (_, panel) => (index * 17 + panel * 11) % 29)
       };
       const card = document.createElement('article');
       card.className = 'species box-profile';
@@ -196,7 +209,7 @@
       art.className = 'box-art';
       art.width = art.height = 48;
       art.setAttribute('role', 'img');
-      art.setAttribute('aria-label', name + ' cardboard robot');
+      art.setAttribute('aria-label', name + ' pixel skull');
       draw(box, art);
 
       const info = document.createElement('div');
@@ -227,7 +240,7 @@
       method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)
     });
     if (!response.headers.get('Content-Type')?.includes('application/json')) {
-      throw new Error('ClaudeBox server is unavailable. Start the Node server to use wallet sign-in and chat.');
+      throw new Error('SKULOS server is unavailable. Start the Node server to use wallet sign-in and chat.');
     }
     const result = await response.json();
     if (!response.ok) throw Object.assign(new Error(result.error), {status: response.status});
@@ -250,7 +263,7 @@
     const box = next.address ? await companion(next.address) : null;
     if (version !== generation) return;
     byId('walletStatus').textContent = box ? 'wallet: ' + next.address.slice(0, 4) + '…' + next.address.slice(-4) : 'wallet: —';
-    byId('palStatus').textContent = box ? 'box: ' + box.name : 'box: —';
+    byId('palStatus').textContent = box ? 'pal: ' + box.name : 'pal: —';
     byId('brainStatus').textContent = next.configured ? 'Claude' : 'offline';
     talk.classList.toggle('empty', !box);
     byId('chatEmpty').hidden = Boolean(box);
